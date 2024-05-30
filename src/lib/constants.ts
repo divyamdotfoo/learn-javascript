@@ -289,10 +289,10 @@ export const CountryWithLang: Record<string, string[]> = {
   GA: ["french"],
 };
 
-export const PATHS = {
+export const PATHS: Record<string, string> = {
   english: "README.md",
-  arabic: "ar-AR/README_AR.md",
-  bosnian: "bs-BS/README-bs_BS.md",
+  // arabic: "ar-AR/README_AR.md", // not working
+  // bosnian: "bs-BS/README-bs_BS.md", //not working
   german: "de-DE/README.md",
   spanish: "es-ES/README-ES.md",
   french: "fr-FR/README_fr-FR.md",
@@ -310,8 +310,8 @@ export const PATHS = {
   turkish: "tr-TR/README-tr_TR.md",
   ukrainian: "uk-UA/README.md",
   vietnamese: "vi-VI/README-vi.md",
-  chinese: "zh-CN/README-zh_CN.md",
+  chinese: "zh-CN/README-zh_CN.md", //not working
 };
 
-export const supportedLanguages = Object.keys(PATHS).slice(1);
+export const supportedLanguages = Object.keys(PATHS);
 export const fallbackLanguage = "english";

@@ -1,23 +1,8 @@
-export const PATHS = {
-  english: "README.md",
-  arabic: "ar-AR/README_AR.md",
-  bosnian: "bs-BS/README-bs_BS.md",
-  german: "de-DE/README.md",
-  spanish: "es-ES/README-ES.md",
-  french: "fr-FR/README_fr-FR.md",
-  indonesian: "id-ID/README.md",
-  italian: "it-IT/README.md",
-  japanese: "ja-JA/README-ja_JA.md",
-  korean: "ko-KR/README-ko_KR.md",
-  dutch: "nl-NL/README.md",
-  polish: "pl-PL/README.md",
-  portuguese: "pt-BR/README_pt_BR.md",
-  romanian: "ro-RO/README.ro.md",
-  russian: "ru-RU/README.md",
-  albanian: "sq-KS/README_sq_KS.md",
-  thai: "th-TH/README.md",
-  turkish: "tr-TR/README-tr_TR.md",
-  ukrainian: "uk-UA/README.md",
-  vietnamese: "vi-VI/README-vi.md",
-  chinese: "zh-CN/README-zh_CN.md",
-} as const;
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export const capitalize = (z: string) => z[0].toUpperCase() + z.slice(1);
