@@ -1,7 +1,6 @@
 export const PATHS = {
   english: "README.md",
   arabic: "ar-AR/README_AR.md",
-  "arabic-egyptian": "ar-EG/README_ar-EG.md",
   bosnian: "bs-BS/README-bs_BS.md",
   german: "de-DE/README.md",
   spanish: "es-ES/README-ES.md",
@@ -20,6 +19,5 @@ export const PATHS = {
   turkish: "tr-TR/README-tr_TR.md",
   ukrainian: "uk-UA/README.md",
   vietnamese: "vi-VI/README-vi.md",
-  "chinese-china": "zh-CN/README-zh_CN.md",
-  "chinese-taiwan": "zh-TW/README_zh-TW.md",
+  chinese: "zh-CN/README-zh_CN.md",
 } as const;
