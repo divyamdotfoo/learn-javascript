@@ -2,8 +2,6 @@ import { GithubApiRes, Question } from "@/types";
 import { Octokit } from "@octokit/core";
 import { atob } from "buffer";
 import { nanoid } from "nanoid";
-import { PATHS } from "./constants";
-
 const REGEXPS = {
   extractRawQuestionData: /######(.*?)---/gs,
   extractQuestion: /######\s+(.*?)\n\n/,
@@ -97,14 +95,3 @@ export const buildRegistryForLang = async (
     })
     .filter(Boolean) as Question[];
 };
-
-async function test() {
-  for (const path of Object.entries(PATHS)) {
-    const md = await getMdFileContents(path[1]);
-    const registry = buildRegistryForLang(path[0]);
-  }
-  // const md = await getMdFileContents(PATHS["chinese-china"]);
-  // const registry = buildRegistryForLang("german", md);
-}
-
-test();

@@ -6,7 +6,8 @@ export type GithubApiRes = {
   };
 };
 
-type Answer = "A" | "B" | "C" | "D" | "E" | "F";
+export type Answer = "A" | "B" | "C" | "D" | "E" | "F";
+export type Category = "all" | "unsolved" | "solved";
 export type Question = {
   id: string;
   question: string;
@@ -17,4 +18,12 @@ export type Question = {
   answer: Answer;
   explanation: string;
   code?: string;
+};
+
+export type LocalStore = {
+  [key: string]: {
+    ids: string[];
+    category: Category;
+    index: number;
+  };
 };

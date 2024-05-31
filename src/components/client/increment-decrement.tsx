@@ -1,9 +1,16 @@
 import { useSingleStore } from "@/store";
+import { usePathname } from "next/navigation";
 
 export function Increment() {
+  const pathname = usePathname().slice(1);
   const incrementIndex = useSingleStore((s) => s.incrementIndex);
   return (
-    <button className=" border border-white" onClick={incrementIndex}>
+    <button
+      className=" border border-white"
+      onClick={() => {
+        incrementIndex();
+      }}
+    >
       next
     </button>
   );
