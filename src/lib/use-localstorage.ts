@@ -1,4 +1,4 @@
-import { Category, LocalStore, Question } from "@/types";
+import { Answer, Category, LocalStore, Question } from "@/types";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { supportedLanguages } from "./constants";
@@ -7,10 +7,13 @@ import { useSingleStore } from "@/store";
 const LOCAL_STORAGE_KEY = "learn-javascript";
 
 export const useLocalStorage = (allQuestions: Question[]) => {
-  const { category, currentIndex } = useSingleStore((s) => ({
-    category: s.category,
-    currentIndex: s.currentIndex,
-  }));
+  const { category, currentIndex, updateQuestions, updateCategory } =
+    useSingleStore((s) => ({
+      category: s.category,
+      currentIndex: s.currentIndex,
+      updateQuestions: s.updateQuestions,
+      updateCategory: s.updateCategory,
+    }));
   const pathname = usePathname().slice(1);
 
   useEffect(() => {
@@ -20,18 +23,18 @@ export const useLocalStorage = (allQuestions: Question[]) => {
       const initial: LocalStore = {
         [pathname]: {
           category: "all",
-          ids: [],
+          questions: {},
           index: 0,
         },
       };
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initial));
-
       useSingleStore.setState({
         questions: {
           all: allQuestions,
           solved: [],
           unsolved: allQuestions,
         },
+        category: "all",
         currentQuestion: allQuestions[0],
       });
     };
@@ -39,6 +42,7 @@ export const useLocalStorage = (allQuestions: Question[]) => {
     const isLocallyStored = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (!isLocallyStored) {
+      console.log("log");
       resetLocalStore();
       return;
     }
@@ -46,52 +50,27 @@ export const useLocalStorage = (allQuestions: Question[]) => {
     const localStore = JSON.parse(isLocallyStored) as LocalStore;
 
     if (!localStore) {
+      console.log("log");
       resetLocalStore();
       return;
     }
 
-    if (localStore[pathname] && Array.isArray(localStore[pathname].ids)) {
-      const solved = allQuestions.filter((q) =>
-        localStore[pathname].ids.includes(q.id)
-      );
-      const unsolved = allQuestions.filter(
-        (q) => !localStore[pathname].ids.includes(q.id)
-      );
+    if (localStore[pathname] && localStore[pathname].questions) {
       const category = localStore[pathname].category;
-      const currentQuestion =
-        category === "all"
-          ? allQuestions[0]
-          : category === "solved"
-          ? solved[0]
-          : unsolved[0];
-      useSingleStore.setState({
-        questions: {
-          all: allQuestions,
-          solved,
-          unsolved,
-        },
-        currentQuestion,
-        category,
-      });
+      updateCategory(category);
+      updateQuestions(localStore[pathname].questions, allQuestions);
     } else {
       const updatedData: LocalStore = {
         ...localStore,
         [pathname]: {
           category: "all",
-          ids: [],
+          questions: {},
           index: 0,
         },
       };
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedData));
-
-      useSingleStore.setState({
-        questions: {
-          all: allQuestions,
-          solved: [],
-          unsolved: allQuestions,
-        },
-        currentQuestion: allQuestions[0],
-      });
+      updateCategory("all");
+      updateQuestions({}, allQuestions);
     }
   }, [allQuestions]);
 };
@@ -99,7 +78,12 @@ export const useLocalStorage = (allQuestions: Question[]) => {
 export const updateLocalStorage = (
   action: "add-id" | "reset-path" | "change-category" | "update-index",
   pathname: string,
-  payload: { id?: string; category?: Category; index?: number }
+  payload: {
+    id?: string;
+    category?: Category;
+    index?: number;
+    response?: Answer;
+  }
 ) => {
   if (!supportedLanguages.includes(pathname)) return;
   const z = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -110,7 +94,7 @@ export const updateLocalStorage = (
   if (action === "reset-path") {
     const updatedData: LocalStore = {
       ...data,
-      [pathname]: { category: "all", ids: [], index: 0 },
+      [pathname]: { category: "all", questions: {}, index: 0 },
     };
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedData));
     return;
@@ -119,11 +103,14 @@ export const updateLocalStorage = (
   const current = data[pathname];
   if (!current) return;
 
-  if (action === "add-id" && payload.id) {
-    const ids = Array.from(new Set([...current.ids, payload.id]));
+  if (action === "add-id" && payload.id && payload.response) {
+    const questions: LocalStore[string]["questions"] = {
+      ...current.questions,
+      [payload.id]: { id: payload.id, response: payload.response },
+    };
     const updatedData: LocalStore = {
       ...data,
-      [pathname]: { ...current, ids },
+      [pathname]: { ...current, questions },
     };
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedData));
     return;

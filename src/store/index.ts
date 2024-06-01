@@ -1,4 +1,4 @@
-import { Category, Question } from "@/types";
+import { Category, LocalStore, Question } from "@/types";
 import { create } from "zustand";
 
 // A big fat single store.
@@ -14,11 +14,15 @@ interface SingleStore {
   incrementIndex: () => void;
   decrementIndex: () => void;
   category: Category;
-  setCategory: (val: Category) => void;
+  updateCategory: (val: Category) => void;
   currentQuestion: Question | null;
   explanation: boolean;
   showExplanation: () => void;
   hideExplanation: () => void;
+  updateQuestions: (
+    solvedQs: LocalStore["string"]["questions"],
+    allQuestions?: Question[]
+  ) => void;
 }
 export const useSingleStore = create<SingleStore>((set, get) => ({
   questions: {
@@ -26,6 +30,24 @@ export const useSingleStore = create<SingleStore>((set, get) => ({
     unsolved: [],
     all: [],
   },
+
+  updateQuestions: (solvedQs, allQuestions) => {
+    const all = allQuestions ?? get().questions.all;
+    const solved = all
+      .filter((q) => Object.keys(solvedQs).includes(q.id))
+      .map((q) => ({ ...q, solved: { response: solvedQs[q.id].response } }));
+
+    const unsolved = all.filter((q) => !solved.map((q) => q.id).includes(q.id));
+
+    set({
+      questions: {
+        all,
+        solved,
+        unsolved,
+      },
+    });
+  },
+
   currentIndex: 0,
   setCurrentIndex: (v) => set({ currentIndex: v }),
   incrementIndex: () => {
@@ -44,7 +66,7 @@ export const useSingleStore = create<SingleStore>((set, get) => ({
     }));
   },
   category: "all",
-  setCategory: (val) => {
+  updateCategory: (val) => {
     set((s) => ({
       currentIndex: 0,
       category: val,

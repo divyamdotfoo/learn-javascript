@@ -18,12 +18,35 @@ export type Question = {
   answer: Answer;
   explanation: string;
   code?: string;
+  solved?: {
+    response: Answer;
+  };
 };
 
 export type LocalStore = {
   [key: string]: {
-    ids: string[];
+    questions: {
+      [key: string]: {
+        id: string;
+        response: Answer;
+      };
+    };
     category: Category;
     index: number;
   };
 };
+
+interface OutputItemSimple {
+  type: "simple";
+  value: string;
+}
+
+interface OutputItemError {
+  type: "error";
+  errorType: string;
+  errorMessage: string;
+}
+
+type OutputItem = OutputItemSimple | OutputItemError;
+
+export type OutputArray = OutputItem[];

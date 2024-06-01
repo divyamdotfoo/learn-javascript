@@ -14,16 +14,16 @@ export function Main({ allQuestions }: { allQuestions: QuestionType[] }) {
   const setIndex = useSingleStore((s) => s.setCurrentIndex);
   useEffect(() => {
     setIndex(0);
-    return () => console.log("main component unmounted");
   }, [allQuestions]);
-  console.log("render main component");
 
   return (
-    <div className=" flex flex-col items-start px-8 gap-2">
-      <FilterQuestions allQuestionsLength={allQuestions.length} />
-      <div className=" flex items-center gap-3 pt-4 self-end">
-        <Decrement />
-        <Increment />
+    <div className=" flex flex-col items-start gap-6 py-8 min-h-screen">
+      <div className=" flex items-center justify-between w-full">
+        <FilterQuestions allQuestionsLength={allQuestions.length} />
+        <div className=" hidden sm:flex items-center gap-3">
+          <Decrement />
+          <Increment />
+        </div>
       </div>
       <Question allQuestions={allQuestions} />
     </div>

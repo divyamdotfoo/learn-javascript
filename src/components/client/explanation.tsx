@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useSingleStore } from "@/store";
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 
 export function Explanation({ isOptionChosen }: { isOptionChosen: boolean }) {
   const { currentQuestion, isShowing, hideExplanation, showExplanation } =
@@ -15,14 +16,32 @@ export function Explanation({ isOptionChosen }: { isOptionChosen: boolean }) {
     if (!isShowing) showExplanation();
     else hideExplanation();
   };
+
+  if (!currentQuestion) return;
+  const highlightedText = currentQuestion.explanation.replaceAll(
+    /`(.*?)`/g,
+    ` <span class="bg-foreground text-white px-3 my-1 mx-1 rounded-sm inline-block">$1</span>`
+  );
   return (
-    <div className=" p-2 max-w-80">
-      <button onClick={handler}>Explanation</button>
-      <div
-        className={cn("p-4 border border-white", !isShowing ? "hidden" : "")}
+    <div className=" pt-6">
+      <button
+        onClick={handler}
+        className=" font-semibold text-primary py-2 text-xl flex items-center gap-1"
       >
-        {currentQuestion?.explanation}
-      </div>
+        Explanation
+        {isShowing ? (
+          <ChevronUpIcon className=" w-5 h-5" />
+        ) : (
+          <ChevronDownIcon className=" w-5 h-5" />
+        )}
+      </button>
+      <div
+        className={cn(
+          " bg-white shadow-sm text-sm shadow-black/30 p-4 rounded-md ",
+          !isShowing ? "hidden" : ""
+        )}
+        dangerouslySetInnerHTML={{ __html: highlightedText }}
+      />
     </div>
   );
 }
