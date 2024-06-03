@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     description: "learn javascript in your native language.",
     images: [
       {
-        url: "https://play-with-javascript.vercel.app/og.png",
+        url: "https://play-with-javascript.vercel.app/og.jpeg",
         alt: "Play with javascript",
       },
     ],
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Learn javascript",
     description: "learn javascript in your native language",
-    images: ["https://play-with-javascript.vercel.app/og.png"],
+    images: ["https://play-with-javascript.vercel.app/og.jpeg"],
     creator: "divyam gupta",
   },
 };

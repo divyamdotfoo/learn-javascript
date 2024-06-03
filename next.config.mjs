@@ -7,11 +7,12 @@ const withPwa = nextPwa({
 
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    // ignoreDuringBuilds: true,
   },
 };
 
 export default withPwa(nextConfig);
+// export default nextConfig;

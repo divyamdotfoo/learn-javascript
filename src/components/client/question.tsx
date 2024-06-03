@@ -12,10 +12,11 @@ import { Editor } from "./editor";
 import { motion, HTMLMotionProps, AnimatePresence } from "framer-motion";
 import { useSound } from "@/lib/hooks/useSound";
 import { errorSound, levelUpSound, successSound } from "@/lib/constants";
+import { SymbolIcon } from "@radix-ui/react-icons";
 
 export function Question({ allQuestions }: { allQuestions: Question[] }) {
   const [playAudio, pauseAudio] = useSound(
-    0.3,
+    0.5,
     String(Math.random()).slice(0, 5)
   );
 
@@ -30,6 +31,7 @@ export function Question({ allQuestions }: { allQuestions: Question[] }) {
     showExplanation,
     addSolved,
     solvedLength,
+    category,
   } = useSingleStore((s) => ({
     index: s.currentIndex,
     currentQuestion: s.currentQuestion,
@@ -38,6 +40,7 @@ export function Question({ allQuestions }: { allQuestions: Question[] }) {
     addSolved: s.addSolvedQuestion,
     isShowing: s.explanation,
     solvedLength: s.questions.solved.length,
+    category: s.category,
   }));
 
   const [correct, setCorrect] = useState<Answer | null>(null);
@@ -66,9 +69,18 @@ export function Question({ allQuestions }: { allQuestions: Question[] }) {
     }
   }, [currentQuestion, hideExplanation, showExplanation]);
 
+  if (!currentQuestion && category === "solved")
+    return (
+      <div className=" absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 ">
+        <p>You haven&apos;t completed any questions yet.</p>
+      </div>
+    );
+
   if (!currentQuestion)
     return (
-      <div className=" w-full h-80 flex items-center justify-center"></div>
+      <div className=" absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <SymbolIcon className=" text-primary font-extrabold w-7 h-7 animate-spin" />
+      </div>
     );
 
   const handleClick = (choosen: Answer) => {
