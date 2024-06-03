@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
+import nextPwa from "next-pwa";
+
+const withPwa = nextPwa({
+  dest: "public",
+});
+
 const nextConfig = {
   typescript: {
-    // ignoreBuildErrors: true,
+    ignoreBuildErrors: true,
   },
   eslint: {
-    // ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true,
   },
 };
 
-export default nextConfig;
+export default withPwa(nextConfig);

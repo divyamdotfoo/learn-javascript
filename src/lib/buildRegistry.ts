@@ -13,7 +13,7 @@ const REGEXPS = {
 
 const getMdFileContents = async (path: string) => {
   const octokit = new Octokit({
-    auth: "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",
+    auth: process.env.GITHUB_TOKEN,
   });
   const res = (await octokit.request(
     "GET /repos/{owner}/{repo}/contents/{path}",

@@ -1,16 +1,15 @@
 import { Main } from "@/components/client/main";
 import { Header } from "@/components/header";
-import { PATHS, testQuestions } from "@/lib/constants";
+import { PATHS } from "@/lib/constants";
 import Link from "next/link";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Reset } from "@/components/client/reset";
+import { buildRegistryForLang } from "@/lib/buildRegistry";
 export default async function Page({ params }: { params: { lang: string } }) {
   const { lang } = params;
   try {
-    // const questions = await buildRegistryForLang(PATHS[lang]);
-    // const cached = await getCachedData(lang);
-    // const questions: Question[] = JSON.parse(cached);
-    const questions = testQuestions;
+    const questions = await buildRegistryForLang(PATHS[lang]);
+    // const questions = testQuestions;
     return (
       <div className="relative max-w-7xl mx-auto py-4 sm:px-6 px-4 overflow-x-hidden">
         <Header defaultLang={lang} />
