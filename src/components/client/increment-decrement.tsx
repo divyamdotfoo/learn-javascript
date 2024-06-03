@@ -1,10 +1,9 @@
 import { useSingleStore } from "@/store";
-import { usePathname } from "next/navigation";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import React from "react";
 
-export function Increment() {
-  const pathname = usePathname().slice(1);
+export const Increment = React.memo(() => {
   const incrementIndex = useSingleStore((s) => s.incrementIndex);
   return (
     <NavigateBtn
@@ -16,16 +15,20 @@ export function Increment() {
       next
     </NavigateBtn>
   );
-}
-export function Decrement() {
+});
+
+Increment.displayName = "Increment";
+
+export const Decrement = React.memo(() => {
   const decrementIndex = useSingleStore((s) => s.decrementIndex);
   return (
     <NavigateBtn className=" bg-foreground " onClick={decrementIndex}>
       prev
     </NavigateBtn>
   );
-}
+});
 
+Decrement.displayName = "Decrement";
 const NavigateBtn = ({
   children,
   className,

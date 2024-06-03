@@ -1,9 +1,15 @@
-import { updateLocalStorage } from "@/lib/use-localstorage";
+import { updateLocalStorage } from "@/lib/hooks/useLocalStorage";
 import { cn } from "@/lib/utils";
 import { useSingleStore } from "@/store";
 import { usePathname } from "next/navigation";
 import { motion, HTMLMotionProps } from "framer-motion";
-export function FilterQuestions({
+import React from "react";
+
+export const FilterQuestions = React.memo(FilterQues);
+
+FilterQuestions.displayName = "FilterQuestions";
+
+export function FilterQues({
   allQuestionsLength,
 }: {
   allQuestionsLength: number;
@@ -34,7 +40,7 @@ export function FilterQuestions({
         }}
         className={cn(category === "solved" ? "bg-primary text-white" : "")}
       >
-        solved
+        solved <span className=" pl-1">({questions.solved.length})</span>
       </FilterBtn>
       <FilterBtn
         onClick={() => {

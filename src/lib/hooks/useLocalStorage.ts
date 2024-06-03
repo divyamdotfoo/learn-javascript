@@ -1,19 +1,14 @@
 import { Answer, Category, LocalStore, Question } from "@/types";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { supportedLanguages } from "./constants";
+import { LOCAL_STORAGE_KEY, supportedLanguages } from "../constants";
 import { useSingleStore } from "@/store";
 
-const LOCAL_STORAGE_KEY = "learn-javascript";
-
 export const useLocalStorage = (allQuestions: Question[]) => {
-  const { category, currentIndex, updateQuestions, updateCategory } =
-    useSingleStore((s) => ({
-      category: s.category,
-      currentIndex: s.currentIndex,
-      updateQuestions: s.updateQuestions,
-      updateCategory: s.updateCategory,
-    }));
+  const { category, updateQuestions } = useSingleStore((s) => ({
+    category: s.category,
+    updateQuestions: s.updateQuestions,
+  }));
   const pathname = usePathname().slice(1);
 
   useEffect(() => {
@@ -30,19 +25,18 @@ export const useLocalStorage = (allQuestions: Question[]) => {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initial));
       useSingleStore.setState({
         questions: {
-          all: allQuestions,
+          all: [...allQuestions],
           solved: [],
-          unsolved: allQuestions,
+          unsolved: [...allQuestions],
         },
         category: "all",
-        currentQuestion: allQuestions[0],
+        currentQuestion: [...allQuestions][0],
       });
     };
 
     const isLocallyStored = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (!isLocallyStored) {
-      console.log("log");
       resetLocalStore();
       return;
     }
@@ -50,15 +44,15 @@ export const useLocalStorage = (allQuestions: Question[]) => {
     const localStore = JSON.parse(isLocallyStored) as LocalStore;
 
     if (!localStore) {
-      console.log("log");
       resetLocalStore();
       return;
     }
 
     if (localStore[pathname] && localStore[pathname].questions) {
       const category = localStore[pathname].category;
-      updateCategory(category);
-      updateQuestions(localStore[pathname].questions, allQuestions);
+      updateQuestions(localStore[pathname].questions, category, [
+        ...allQuestions,
+      ]);
     } else {
       const updatedData: LocalStore = {
         ...localStore,
@@ -69,10 +63,10 @@ export const useLocalStorage = (allQuestions: Question[]) => {
         },
       };
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedData));
-      updateCategory("all");
-      updateQuestions({}, allQuestions);
+      updateQuestions({}, "all", [...allQuestions]);
+      // updateCategory("all");
     }
-  }, [allQuestions]);
+  }, [allQuestions, updateQuestions]);
 };
 
 export const updateLocalStorage = (

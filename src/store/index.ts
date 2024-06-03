@@ -1,7 +1,5 @@
-import { Category, LocalStore, Question } from "@/types";
+import { Answer, Category, LocalStore, Question } from "@/types";
 import { create } from "zustand";
-
-// A big fat single store.
 
 interface SingleStore {
   questions: {
@@ -21,30 +19,52 @@ interface SingleStore {
   hideExplanation: () => void;
   updateQuestions: (
     solvedQs: LocalStore["string"]["questions"],
+    category: Category,
     allQuestions?: Question[]
   ) => void;
+  addSolvedQuestion: (id: string, response: Answer) => void;
+  questionAnimationDirection: "left" | "right";
 }
 export const useSingleStore = create<SingleStore>((set, get) => ({
+  questionAnimationDirection: "right",
   questions: {
     solved: [],
     unsolved: [],
     all: [],
   },
 
-  updateQuestions: (solvedQs, allQuestions) => {
+  updateQuestions: (solvedQs, category, allQuestions) => {
     const all = allQuestions ?? get().questions.all;
     const solved = all
       .filter((q) => Object.keys(solvedQs).includes(q.id))
       .map((q) => ({ ...q, solved: { response: solvedQs[q.id].response } }));
 
     const unsolved = all.filter((q) => !solved.map((q) => q.id).includes(q.id));
-
+    const questions = { all, solved, unsolved };
     set({
-      questions: {
-        all,
-        solved,
-        unsolved,
-      },
+      questions,
+      currentQuestion: questions[category][0],
+      currentIndex: 0,
+      category,
+    });
+  },
+
+  addSolvedQuestion: (id, response) => {
+    const all = get().questions.all;
+    const q = all.find((q) => q.id === id);
+    if (!q) return;
+    const solved: Question[] = Object.values(
+      [...get().questions.solved, { ...q, solved: { response } }].reduce(
+        (acc, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {} as Record<string, Question>
+      )
+    );
+    const unsolved = all.filter((q) => !solved.map((s) => s.id).includes(q.id));
+    set({
+      questions: { all, solved, unsolved },
     });
   },
 
@@ -56,6 +76,7 @@ export const useSingleStore = create<SingleStore>((set, get) => ({
     set((s) => ({
       currentIndex: newIndex,
       currentQuestion: s.questions[s.category][newIndex],
+      questionAnimationDirection: "left",
     }));
   },
   decrementIndex: () => {
@@ -63,6 +84,7 @@ export const useSingleStore = create<SingleStore>((set, get) => ({
     set((s) => ({
       currentIndex: newIndex,
       currentQuestion: s.questions[s.category][newIndex],
+      questionAnimationDirection: "right",
     }));
   },
   category: "all",

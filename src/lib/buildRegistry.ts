@@ -1,7 +1,7 @@
 import { GithubApiRes, Question } from "@/types";
 import { Octokit } from "@octokit/core";
-import { atob } from "buffer";
 import { nanoid } from "nanoid";
+import fs from "fs/promises";
 const REGEXPS = {
   extractRawQuestionData: /######(.*?)---/gs,
   extractQuestion: /######\s+(.*?)\n\n/,
@@ -23,7 +23,7 @@ const getMdFileContents = async (path: string) => {
       repo: "javascript-questions",
     }
   )) as GithubApiRes;
-  return atob(res.data.content);
+  return Buffer.from(res.data.content, "base64").toString("utf-8");
 };
 
 export const buildRegistryForLang = async (
@@ -94,4 +94,8 @@ export const buildRegistryForLang = async (
       };
     })
     .filter(Boolean) as Question[];
+};
+
+export const getCachedData = (slug: string) => {
+  return fs.readFile(`temp/${slug}.json`, "utf-8");
 };

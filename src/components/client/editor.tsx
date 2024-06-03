@@ -11,17 +11,25 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 // @ts-ignore
 import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { OutputArray } from "@/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export function Editor({ isOptionChosen }: { isOptionChosen: boolean }) {
   const { currentQuestion } = useSingleStore((s) => ({
     currentQuestion: s.currentQuestion,
   }));
-  const [output, setOutput] = useState<OutputArray>([]);
-  if (!currentQuestion) return null;
-  if (!currentQuestion.code) return null;
+
   useEffect(() => {
     setOutput([]);
   }, [currentQuestion]);
+
+  const [output, setOutput] = useState<OutputArray>([]);
+  if (!currentQuestion) return null;
+  if (!currentQuestion.code) return null;
 
   const handleExecution = (code: string) => {
     try {
@@ -61,33 +69,45 @@ export function Editor({ isOptionChosen }: { isOptionChosen: boolean }) {
         ]);
     }
   };
+
   return (
     <div className=" flex flex-col items-start gap-4 md:max-w-[450px] w-full pt-4">
       <div className="w-full bg-editor rounded-md">
         <div className=" flex w-full items-center justify-between py-2 pr-4 pl-5">
           <Mac />
-          <button
-            disabled={!isOptionChosen}
-            onClick={() => handleExecution(currentQuestion.code!)}
-            className=" cursor-pointer disabled:opacity-70 bg-primary rounded-md shadow-sm shadow-black/30 p-1"
-          >
-            <PlayIcon className=" w-6 h-6 text-white font-extrabold" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  disabled={!isOptionChosen}
+                  onClick={() => handleExecution(currentQuestion.code!)}
+                  className=" cursor-pointer disabled:opacity-70 bg-primary rounded-md shadow-sm shadow-black/30 p-1"
+                >
+                  <PlayIcon className=" w-6 h-6 text-white font-extrabold" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className=" bg-white text-foreground">
+                Try the question first.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        <SyntaxHighlighter
-          language={"jsx"}
-          className=" scrollContainer pb-2 pl-3 pr-5 w-full max-h-[250px] min-h-[200px] overflow-auto rounded-md bg-editor"
-          showLineNumbers
-          style={{
-            ...nightOwl,
-            hljs: {
-              display: "block",
-              color: "#f8f8f2",
-            },
-          }}
-        >
-          {currentQuestion.code}
-        </SyntaxHighlighter>
+        <div className="scrollContainer overflow-auto">
+          <SyntaxHighlighter
+            language={"javascript"}
+            className="pb-2 pl-3 pr-5 w-full max-h-[250px] min-h-[200px] rounded-md bg-editor"
+            showLineNumbers
+            style={{
+              ...nightOwl,
+              hljs: {
+                display: "block",
+                color: "#f8f8f2",
+              },
+            }}
+          >
+            {currentQuestion.code}
+          </SyntaxHighlighter>
+        </div>
       </div>
 
       <Output outputArr={output} />
@@ -101,13 +121,16 @@ function Output({ outputArr }: { outputArr: OutputArray }) {
       <p className=" text-sm font-semibold opacity-80">output</p>
       {outputArr.map((output) =>
         output.type === "simple" ? (
-          <p>{output.value}</p>
+          <p className=" py-[2px] font-light" key={output.value}>
+            {output.value}
+          </p>
         ) : (
-          <p className=" flex items-center gap-2">
-            <span className=" font-semibold text-red-600">
+          <p className="py-[2px]" key={output.errorMessage}>
+            <span className=" font-semibold text-red-500  text-wrap pr-[2px]">
               {output.errorType}
             </span>
-            <span>:</span> <span>{output.errorMessage}</span>
+            <span className=" pr-2">:</span>
+            <span className=" text-wrap font-light">{output.errorMessage}</span>
           </p>
         )
       )}
