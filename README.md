@@ -1,4 +1,4 @@
-v# Learn Javascript
+# Learn Javascript
 #### This website is designed to help you practice and learn JavaScript through various questions and exercises in multiple languages.
 
 ### Features
