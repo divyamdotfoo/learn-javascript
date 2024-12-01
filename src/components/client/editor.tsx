@@ -2,11 +2,6 @@ import { useSingleStore } from "@/store";
 import { useEffect, useState } from "react";
 import { PlayIcon } from "@radix-ui/react-icons";
 // @ts-ignore
-// import { highlight, languages } from "prismjs/components/prism-core";
-// import "prismjs/components/prism-clike";
-// import "prismjs/components/prism-javascript";
-// import "prismjs/themes/prism-dark.css";
-
 import SyntaxHighlighter from "react-syntax-highlighter";
 // @ts-ignore
 import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";

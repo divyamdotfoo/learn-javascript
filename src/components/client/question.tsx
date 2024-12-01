@@ -173,9 +173,6 @@ const Option = ({
     ` <span class="bg-foreground text-white px-1 py-1 rounded-md mx-1 text-wrap">$1</span>`
   );
 
-  const __html = `<span class="text-primary font-semibold text-2xl inline-block translate-y-[3px] pr-1">
-  ${value}.
-</span>${highlightedText}`;
   return (
     <motion.button
       whileHover={{ scale: 1.01 }}
@@ -186,7 +183,6 @@ const Option = ({
         className
       )}
       {...props}
-      // dangerouslySetInnerHTML={{ __html: __html }}
     >
       <p>
         <span className="text-primary font-semibold text-2xl inline-block translate-y-[3px] pr-1">

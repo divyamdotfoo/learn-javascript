@@ -35,7 +35,7 @@ export const buildRegistryForLang = async (
     console.log("invalid path", path);
     throw new Error("invalid data");
   }
-  console.log(path, rawQuestionData.length);
+  // console.log(path, rawQuestionData.length);
   return rawQuestionData
     .map((data, i) => {
       const questionMatcher = REGEXPS.extractQuestion.exec(data);
@@ -64,17 +64,27 @@ export const buildRegistryForLang = async (
       }
 
       const question = questionMatcher[1].replaceAll(/\d+\./g, "").trim();
+      console.log(optionsMatcher[0]);
       const options = optionsMatcher[0]
         .replace("<details>", "")
         .split("\n")
         .filter((_) => _.trim().length)
         .map((opt) => {
-          const [value, text] = opt.split(":");
-          return {
-            value: value.replace("-", "").trim(),
-            text: text.replace("\n", "").trim(),
-          };
+          const cleanedOpt = opt.replace(/^\-\s*([A-Z]):\s*/, "");
+
+          const match = opt.match(/^\-\s*([A-Z]):/);
+          const value = match ? match[1] : ""; // Get the letter (A, B, C, etc.)
+
+          if (cleanedOpt) {
+            return {
+              value: value.trim(),
+              text: cleanedOpt.trim(),
+            };
+          }
+          return null; // Return null if no valid text is found
         });
+
+      console.log(options);
 
       const answer = answerMatcher[1].replaceAll(":", "").trim();
 
